@@ -2,87 +2,55 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilipili - 我的私人影院</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pilipili - 你的私人B站</title>
     <style>
-        /* 全局样式：去掉B站的所有杂乱界面，只保留你自己的 */
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background-color: #121212; /* 深邃的高级黑背景 */
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
-        .app-container {
-            max-width: 400px;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-        }
-        .logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: #FB7299; /* 你专属的粉色品牌色 */
-            margin-bottom: 30px;
-            letter-spacing: 2px;
-        }
-        /* 视频播放器框架 */
-        .video-player {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background-color: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(251, 114, 153, 0.2); /* 粉色发光边框 */
-            border: 1px solid #333;
-        }
-        iframe {
-            width: 100%;
+        body, html {
             height: 100%;
-            border: 0;
+            background-color: #f5f5f5;
+            overflow: hidden; /* 禁止外层滚动，只让内部滚动 */
         }
-        .video-title {
+        /* 你的专属粉色顶栏 */
+        .top-bar {
+            height: 50px;
+            background-color: #FB7299;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-size: 20px;
-            margin-top: 20px;
             font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 999;
         }
-        .video-desc {
-            font-size: 14px;
-            color: #999;
-            margin-top: 10px;
-            margin-bottom: 30px;
-        }
-        .footer {
-            font-size: 12px;
-            color: #555;
+        /* 套住 B 站的“大窗口” */
+        .bili-window {
+            width: 100%;
+            height: calc(100% - 50px); /* 减去顶栏高度 */
+            margin-top: 50px;
+            border: none;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- 你的专属 Logo -->
-        <div class="logo">Pilipili</div>
-        
-        <!-- 纯净的B站视频内核播放器 -->
-        <div class="video-player">
-            <iframe 
-                src="https://www.bilibili.com/blackboard/html5mobileplayer.html?bvid=BV144411K7bN&autoplay=1&muted=1" 
-                scrolling="no" 
-                border="0" 
-                frameborder="no" 
-                framespacing="0" 
-                allowfullscreen="true">
-            </iframe>
-        </div>
-        
-        <div class="video-title">欢迎来到 Pilipili</div>
-        <div class="video-desc">这里没有下载弹窗，只有纯粹的视频体验</div>
-        
-        <div class="footer">Pilipili Private Site v1.0</div>
-    </div>
+    <!-- 你的品牌标题 -->
+    <div class="top-bar">Pilipili</div>
+    
+    <!-- 把 B站手机版首页套进来 -->
+    <iframe 
+        class="bili-window" 
+        src="https://m.bilibili.com" 
+        scrolling="yes"
+        allowfullscreen>
+    </iframe>
 </body>
 </html>
