@@ -32,7 +32,7 @@ body { background: #f5f5f5; font-family: sans-serif; }
 
 .grid {
   padding: 10px 15px; display: grid;
-  grid-template-columns: repeat(2, 1fr); gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px;
 }
 .card {
   background: #fff; border-radius: 10px; overflow: hidden;
@@ -52,7 +52,15 @@ body { background: #f5f5f5; font-family: sans-serif; }
 
 .loading, .empty {
   text-align: center; padding: 40px 20px; color: #999; font-size: 14px;
+  grid-column: 1/-1;
 }
+
+.retry-btn {
+  margin-top: 12px; padding: 8px 20px; border-radius: 20px;
+  border: none; background: #FB7299; color: #fff; font-size: 13px;
+  cursor: pointer;
+}
+.retry-btn:hover { background: #e05a82; }
 
 .player-mask {
   display: none; position: fixed; inset: 0;
@@ -78,7 +86,7 @@ body { background: #f5f5f5; font-family: sans-serif; }
 </div>
 
 <div class="grid" id="grid">
-  <div class="tips" style="grid-column:1/-1;text-align:center;padding:40px 20px;color:#999;font-size:14px;">
+  <div class="loading" style="grid-column:1/-1;">
     输入关键词，搜索全站视频
   </div>
 </div>
@@ -89,42 +97,67 @@ body { background: #f5f5f5; font-family: sans-serif; }
 </div>
 
 <script>
+let lastKw = "";
+
 async function search() {
   const kw = document.getElementById("kw").value.trim();
   if (!kw) return;
+  lastKw = kw;
 
   const grid = document.getElementById("grid");
-  grid.innerHTML = '<div class="loading" style="grid-column:1/-1;">搜索中...</div>';
+  grid.innerHTML = '<div class="loading">正在搜索中...</div>';
 
-  try {
-    // 通过 allorigins 代理绕过跨域限制
-    const proxy = "https://api.allorigins.win/raw?url=";
-    const apiUrl = "https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=" + encodeURIComponent(kw);
-    const res = await fetch(proxy + encodeURIComponent(apiUrl));
-    const json = await res.json();
+  const apiUrl = "https://api.bilibili.com/x/web-interface/search/type?search_type=video&keyword=" + encodeURIComponent(kw);
 
-    const list = json.data?.result || [];
-    if (list.length === 0) {
-      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">没有找到相关视频</div>';
-      return;
-    }
+  // 5个代理通道，轮流尝试
+  const proxies = [
+    "https://corsproxy.io/?",
+    "https://thingproxy.freeboard.io/fetch/",
+    "https://api.allorigins.win/raw?url=",
+    "https://api.codetabs.com/v1/proxy?quest=",
+    "https://proxy.cors.sh/"
+  ];
 
-    grid.innerHTML = "";
-    list.forEach(v => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.onclick = () => openPlayer(v.bvid);
-      card.innerHTML = `
-        <div class="cover" style="background-image:url(${v.pic})"></div>
-        <div class="info">
-          <div class="title">${stripHtml(v.title)}</div>
-          <div class="meta">${v.author || ""} · ${formatView(v.play)}</div>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-  } catch (e) {
-    grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">搜索失败，请重试</div>';
+  let success = false;
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy + encodeURIComponent(apiUrl));
+      if (!res.ok) continue;
+      const json = await res.json();
+
+      const list = json.data?.result || [];
+      if (list.length === 0) {
+        grid.innerHTML = '<div class="empty">没有找到相关视频</div>';
+        return;
+      }
+
+      grid.innerHTML = "";
+      list.forEach(v => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.onclick = () => openPlayer(v.bvid);
+        card.innerHTML = `
+          <div class="cover" style="background-image:url(${v.pic})"></div>
+          <div class="info">
+            <div class="title">${stripHtml(v.title)}</div>
+            <div class="meta">${v.author || ""} · ${formatView(v.play)}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      success = true;
+      break;
+    } catch (e) { continue; }
+  }
+
+  if (!success) {
+    grid.innerHTML = `
+      <div class="empty">
+        搜索失败，请重试
+        <br><br>
+        <button class="retry-btn" onclick="search()">换一批代理重试</button>
+      </div>
+    `;
   }
 }
 
