@@ -3,65 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pilipili</title>
+    <title>Pilipili - 我的私人影院</title>
     <style>
+        /* 全局样式：去掉B站的所有杂乱界面，只保留你自己的 */
         body {
             margin: 0;
             padding: 0;
+            background-color: #121212; /* 深邃的高级黑背景 */
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f5f5f5;
-            font-family: Arial, sans-serif;
+        }
+        .app-container {
+            max-width: 400px;
+            width: 100%;
+            padding: 20px;
             text-align: center;
         }
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        h1 {
-            color: #fb7299;
-            font-size: 48px;
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            color: #FB7299; /* 你专属的粉色品牌色 */
             margin-bottom: 30px;
-            margin-top: 0;
+            letter-spacing: 2px;
         }
-        .video-box {
-            width: 340px;
-            height: 220px;
+        /* 视频播放器框架 */
+        .video-player {
+            width: 100%;
+            aspect-ratio: 16 / 9;
             background-color: #000;
-            border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(251, 114, 153, 0.2); /* 粉色发光边框 */
+            border: 1px solid #333;
         }
         iframe {
             width: 100%;
             height: 100%;
             border: 0;
         }
-        h2 {
-            color: #333;
-            font-size: 28px;
-            margin-top: 35px;
-            margin-bottom: 10px;
+        .video-title {
+            font-size: 20px;
+            margin-top: 20px;
+            font-weight: bold;
         }
-        p {
-            color: #666;
-            font-size: 16px;
+        .video-desc {
+            font-size: 14px;
+            color: #999;
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        .footer {
+            font-size: 12px;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Pilipili</h1>
-        <!-- 这里是 B站视频播放器 -->
-        <div class="video-box">
-            <iframe src="https://player.bilibili.com/player.html?bvid=BV144411K7bN&page=1&high_quality=1" scrolling="no" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
+    <div class="app-container">
+        <!-- 你的专属 Logo -->
+        <div class="logo">Pilipili</div>
+        
+        <!-- 纯净的B站视频内核播放器 -->
+        <div class="video-player">
+            <iframe 
+                src="https://www.bilibili.com/blackboard/html5mobileplayer.html?bvid=BV144411K7bN&autoplay=1&muted=1" 
+                scrolling="no" 
+                border="0" 
+                frameborder="no" 
+                framespacing="0" 
+                allowfullscreen="true">
+            </iframe>
         </div>
-        <h2>Watch videos!</h2>
-        <p>这是一个用纯代码搭建的超酷个人网页。</p>
+        
+        <div class="video-title">欢迎来到 Pilipili</div>
+        <div class="video-desc">这里没有下载弹窗，只有纯粹的视频体验</div>
+        
+        <div class="footer">Pilipili Private Site v1.0</div>
     </div>
 </body>
 </html>
